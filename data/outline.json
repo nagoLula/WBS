@@ -1,0 +1,91 @@
+{
+  "title": "Secure Clinical Communication Platform",
+  "children": [
+    {
+      "code": "1.0",
+      "title": "Project Management & Governance",
+      "children": [
+        { "code": "1.1", "title": "Project Charter & Approvals" },
+        { "code": "1.2", "title": "Stakeholder Engagement & Communication" },
+        { "code": "1.3", "title": "Vendor Selection Documentation" },
+        { "code": "1.4", "title": "Project Monitoring & Reporting" },
+        { "code": "1.5", "title": "Risk & Issue Management" }
+      ]
+    },
+    {
+      "code": "2.0",
+      "title": "Requirements & Design",
+      "children": [
+        { "code": "2.1", "title": "Requirements Validation & Traceability" },
+        { "code": "2.2", "title": "Security & Compliance Design" },
+        {
+          "code": "2.3",
+          "title": "Clinical Workflow Design",
+          "children": [
+            { "code": "2.3.1", "title": "Secure Messaging Workflows" },
+            { "code": "2.3.2", "title": "Escalation & Handoff Workflows" }
+          ]
+        },
+        { "code": "2.4", "title": "Technical Architecture Design" },
+        { "code": "2.5", "title": "Usability & Interface Design" }
+      ]
+    },
+    {
+      "code": "3.0",
+      "title": "System Configuration & Build",
+      "children": [
+        { "code": "3.1", "title": "Secure Messaging Configuration" },
+        { "code": "3.2", "title": "Role-Based Access Configuration" },
+        { "code": "3.3", "title": "Group Messaging & Alerts" },
+        { "code": "3.4", "title": "On-Call Schedule Integration" },
+        { "code": "3.5", "title": "Escalation Pathway Configuration" },
+        { "code": "3.6", "title": "Mobile & Desktop Application Setup" },
+        { "code": "3.7", "title": "Offline Mode & Queued Delivery" }
+      ]
+    },
+    {
+      "code": "4.0",
+      "title": "Testing & Validation",
+      "children": [
+        { "code": "4.1", "title": "System Testing" },
+        { "code": "4.2", "title": "Security & Compliance Testing" },
+        { "code": "4.3", "title": "Workflow Validation Testing" },
+        { "code": "4.4", "title": "User Acceptance Testing (UAT)" },
+        { "code": "4.5", "title": "Issue Remediation & Retesting" }
+      ]
+    },
+    {
+      "code": "5.0",
+      "title": "Training & Change Management",
+      "children": [
+        { "code": "5.1", "title": "Training Needs Assessment" },
+        { "code": "5.2", "title": "Training Material Development" },
+        { "code": "5.3", "title": "Superuser Training" },
+        { "code": "5.4", "title": "End-User Training" },
+        { "code": "5.5", "title": "Change Readiness & Adoption Support" }
+      ]
+    },
+    {
+      "code": "6.0",
+      "title": "Go-Live & Implementation Support",
+      "children": [
+        { "code": "6.1", "title": "Go-Live Planning" },
+        { "code": "6.2", "title": "Go-Live Execution" },
+        { "code": "6.3", "title": "At-the-Elbow Support & Rounding" },
+        { "code": "6.4", "title": "Issue Tracking & Resolution" },
+        { "code": "6.5", "title": "Transition to Operations" }
+      ]
+    },
+    {
+      "code": "7.0",
+      "title": "Operations & Post-Implementation Evaluation",
+      "children": [
+        { "code": "7.1", "title": "24/7 System Monitoring & Support" },
+        { "code": "7.2", "title": "Performance & Reliability Monitoring" },
+        { "code": "7.3", "title": "Adoption & Usage Analysis" },
+        { "code": "7.4", "title": "Safety & Response Time Evaluation" },
+        { "code": "7.5", "title": "Post-Implementation Review & Lessons Learned" }
+      ]
+    }
+  ]
+}
