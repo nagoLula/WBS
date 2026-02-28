@@ -6,9 +6,9 @@
       "title": "Project Management & Governance",
       "children": [
         { "code": "1.1", "title": "Project Charter & Approvals" },
-        { "code": "1.2", "title": "Stakeholder Engagement & Communication" },
+        { "code": "1.2", "title": "Stakeholder Engagement & Communication Management" },
         { "code": "1.3", "title": "Vendor Selection Documentation" },
-        { "code": "1.4", "title": "Project Monitoring & Reporting" },
+        { "code": "1.4", "title": "Project Monitoring & Status Reporting" },
         { "code": "1.5", "title": "Risk & Issue Management" }
       ]
     },
@@ -17,7 +17,7 @@
       "title": "Requirements & Design",
       "children": [
         { "code": "2.1", "title": "Requirements Validation & Traceability" },
-        { "code": "2.2", "title": "Security & Compliance Design" },
+        { "code": "2.2", "title": "Security & Compliance Design (HIPAA)" },
         {
           "code": "2.3",
           "title": "Clinical Workflow Design",
@@ -36,11 +36,11 @@
       "children": [
         { "code": "3.1", "title": "Secure Messaging Configuration" },
         { "code": "3.2", "title": "Role-Based Access Configuration" },
-        { "code": "3.3", "title": "Group Messaging & Alerts" },
+        { "code": "3.3", "title": "Group Messaging & Alert Configuration" },
         { "code": "3.4", "title": "On-Call Schedule Integration" },
         { "code": "3.5", "title": "Escalation Pathway Configuration" },
         { "code": "3.6", "title": "Mobile & Desktop Application Setup" },
-        { "code": "3.7", "title": "Offline Mode & Queued Delivery" }
+        { "code": "3.7", "title": "Offline Mode & Queued Delivery Configuration" }
       ]
     },
     {

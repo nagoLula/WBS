@@ -7,16 +7,24 @@ import json
 import math
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Iterable
+from typing import Any, Iterable
 
 import matplotlib
 
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt
+from matplotlib.backends.backend_agg import FigureCanvasAgg
+from matplotlib.figure import Figure
+
+def _child_list_factory() -> list["OutlineNode"]:
+    return []
+
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_PATH = ROOT / "data" / "outline.json"
 OUTPUT_DIR = ROOT / "output"
+DEFAULT_PDF = OUTPUT_DIR / "secure-clinical-communication.pdf"
+DEFAULT_MD = OUTPUT_DIR / "secure-clinical-communication.md"
+DEFAULT_ASCII = OUTPUT_DIR / "WBS_diagram"
 
 
 @dataclass
@@ -25,8 +33,8 @@ class OutlineNode:
 
     title: str
     code: str | None = None
-    children: list["OutlineNode"] = field(default_factory=list)
-    parent: "OutlineNode | None" = None
+    children: list["OutlineNode"] = field(default_factory=_child_list_factory)
+    parent: OutlineNode | None = None
     depth: int = 0
     angle: float = 0.0
     radius: float = 0.0
@@ -48,8 +56,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output",
         type=Path,
-        default=OUTPUT_DIR / "secure-clinical-communication.pdf",
-        help="Path for the exported PDF diagram.",
+        default=None,
+        help="Path for the exported artifact (defaults per format).",
+    )
+    parser.add_argument(
+        "--format",
+        choices=["pdf", "markdown", "ascii"],
+        default="pdf",
+        help="Choose between a PDF mind map, markdown outline, or ASCII tree.",
     )
     parser.add_argument(
         "--dpi",
@@ -60,12 +74,12 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def load_outline() -> dict:
+def load_outline() -> dict[str, Any]:
     with DATA_PATH.open("r", encoding="utf-8") as source:
         return json.load(source)
 
 
-def build_tree(raw: dict, depth: int = 0, parent: OutlineNode | None = None) -> OutlineNode:
+def build_tree(raw: dict[str, Any], depth: int = 0, parent: OutlineNode | None = None) -> OutlineNode:
     node = OutlineNode(title=raw["title"], code=raw.get("code"), parent=parent, depth=depth)
     node.children = [build_tree(child, depth + 1, node) for child in raw.get("children", [])]
     return node
@@ -124,7 +138,9 @@ def iter_nodes(root: OutlineNode) -> Iterable[OutlineNode]:
 
 
 def draw_mind_map(root: OutlineNode, output_path: Path, dpi: int = 300) -> None:
-    fig, ax = plt.subplots(figsize=(11, 11))
+    fig: Any = Figure(figsize=(11, 11))
+    FigureCanvasAgg(fig)
+    ax: Any = fig.add_subplot(111)
     ax.axis("off")
 
     connector_color = "#94a3b8"
@@ -140,13 +156,53 @@ def draw_mind_map(root: OutlineNode, output_path: Path, dpi: int = 300) -> None:
 
     fig.tight_layout()
     fig.savefig(output_path, dpi=dpi, bbox_inches="tight", transparent=False)
-    plt.close(fig)
 
 
-def _draw_node(ax: plt.Axes, node: OutlineNode) -> None:
+def export_markdown(root: OutlineNode, output_path: Path) -> None:
+    lines = [f"# {root.label}", ""]
+
+    def _walk(node: OutlineNode, depth: int, bucket: list[str]) -> None:
+        indent = "    " * depth
+        bucket.append(f"{indent}- {node.label}")
+        for child in node.children:
+            _walk(child, depth + 1, bucket)
+
+    for child in root.children:
+        _walk(child, 0, lines)
+
+    output_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def export_ascii(root: OutlineNode, output_path: Path) -> None:
+    lines = [root.label]
+    children = root.children
+    if children:
+        lines.append("│")
+
+    for idx, child in enumerate(children):
+        _walk_ascii(child, prefix="", is_last=idx == len(children) - 1, bucket=lines)
+        if idx < len(children) - 1:
+            lines.append("│")
+            lines.append("")
+
+    output_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def _walk_ascii(node: OutlineNode, *, prefix: str, is_last: bool, bucket: list[str]) -> None:
+    connector = "└──" if is_last else "├──"
+    bucket.append(f"{prefix}{connector} {node.label}")
+    if not node.children:
+        return
+
+    child_prefix = f"{prefix}{'    ' if is_last else '│   '}"
+    for idx, child in enumerate(node.children):
+        _walk_ascii(child, prefix=child_prefix, is_last=idx == len(node.children) - 1, bucket=bucket)
+
+
+def _draw_node(ax: Any, node: OutlineNode) -> None:
     x, y = node.coords
     if node.depth == 0:
-        ax.scatter([x], [y], s=1400, color="#0b3954", zorder=2)
+        ax.scatter([x], [y], s=1400, color="#0b3954", zorder=2)  # type: ignore[attr-defined]
         ax.text(
             x,
             y,
@@ -173,7 +229,7 @@ def _draw_node(ax: plt.Axes, node: OutlineNode) -> None:
         marker_size = 60
         font_size = 10
 
-    ax.scatter([x], [y], s=marker_size, color=color, alpha=0.95, zorder=2)
+    ax.scatter([x], [y], s=marker_size, color=color, alpha=0.95, zorder=2)  # type: ignore[attr-defined]
     offset = 0.3 + 0.08 * node.depth
     text_x = x + offset * math.cos(node.angle)
     text_y = y + offset * math.sin(node.angle)
@@ -201,10 +257,23 @@ def main() -> None:
     ensure_output_dir()
     outline = load_outline()
     root = build_tree(outline)
-    layout_tree(root)
     output_path = args.output
+    if output_path is None:
+        if args.format == "pdf":
+            output_path = DEFAULT_PDF
+        elif args.format == "markdown":
+            output_path = DEFAULT_MD
+        else:
+            output_path = DEFAULT_ASCII
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    draw_mind_map(root, output_path, dpi=args.dpi)
+
+    if args.format == "pdf":
+        layout_tree(root)
+        draw_mind_map(root, output_path, dpi=args.dpi)
+    elif args.format == "markdown":
+        export_markdown(root, output_path)
+    else:
+        export_ascii(root, output_path)
 
     try:
         rel_path = output_path.relative_to(ROOT)
